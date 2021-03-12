@@ -1,5 +1,8 @@
 package uz.pdp.appjpahotelrepository.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import uz.pdp.appjpahotelrepository.entity.Hotel;
 import uz.pdp.appjpahotelrepository.entity.Rooms;
@@ -7,7 +10,6 @@ import uz.pdp.appjpahotelrepository.payload.RoomsDTO;
 import uz.pdp.appjpahotelrepository.repository.HotelRepository;
 import uz.pdp.appjpahotelrepository.repository.RoomsRepository;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -23,16 +25,20 @@ public class RoomsController {
 
     /*Get all Rooms*/
     @RequestMapping(value = "/getRooms", method = RequestMethod.GET)
-    public List<Rooms> getRooms() {
+    public Page<Rooms> getRooms(@RequestParam Integer page) {
 
-        return roomsRepository.findAll();
+        Pageable pageable = PageRequest.of(page, 10);
+        Page<Rooms> roomsPage = roomsRepository.findAll(pageable);
+        return roomsPage;
     }
 
     /*Get Rooms by Hotel ID*/
     @RequestMapping(value = "/getRoomsByHotelId/{hotelId}", method = RequestMethod.GET)
-    public List<Rooms> getRoomsByHotelId(@PathVariable Integer hotelId) {
+    public Page<Rooms> getRoomsByHotelId(@RequestParam("page") Integer page, @PathVariable Integer hotelId) {
 
-        return roomsRepository.findRoomByHotel_Id(hotelId);
+        Pageable pageable = PageRequest.of(page, 10);
+        Page<Rooms> roomsPage = roomsRepository.findRoomByHotel_Id(pageable, hotelId);
+        return roomsPage;
     }
 
     /*Add Room to Hotel*/
